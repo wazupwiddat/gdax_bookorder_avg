@@ -17,3 +17,14 @@ To run:
 3. Make files executable: `chmod u+x *.go`
 4. Grab dependencies: `go get ./...`
 5. Build: `go build`
+
+Kinesis Data Analytics Real-time analytics SQL:
+<pre>
+CREATE OR REPLACE STREAM "DESTINATION_SQL_STREAM" (product_id VARCHAR(8), ticker_symbol_avg float);
+CREATE OR REPLACE PUMP "STREAM_PUMP" AS INSERT INTO "DESTINATION_SQL_STREAM"
+SELECT STREAM "product_id", AVG("price") OVER TEN_SECOND_SLIDING_WINDOW AS ticker_symbol_avg
+FROM "SOURCE_SQL_STREAM_001"
+WINDOW TEN_SECOND_SLIDING_WINDOW AS (
+  PARTITION BY "product_id"
+  RANGE INTERVAL '10' SECOND PRECEDING);
+</pre>
